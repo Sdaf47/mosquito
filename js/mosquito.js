@@ -47,7 +47,7 @@ create_new_mosquito = function (e) {
     mosquitoChildren[i].positionX = e.clientX;
     mosquitoChildren[i].positionY = e.clientY;
     mosquitoChildren[i].create();
-    mosquitoChildren[i].interval = setInterval("mosquitoChildren["+i+"].move("+randOrientation()+","+randOrientation()+")", mosquitoChildren[i].speed);
+    mosquitoChildren[i].interval = setInterval(function(){mosquitoChildren[i].move(randOrientation(), randOrientation())}, mosquitoChildren[i].speed);
 
 
     cannons[0].searchGoal(mosquitoChildren);
@@ -62,7 +62,7 @@ create_new_mosquito = function (e) {
         mosquitoChildren[i].positionX = e.clientX;
         mosquitoChildren[i].positionY = e.clientY;
         mosquitoChildren[i].create();
-        mosquitoChildren[i].interval = setInterval("mosquitoChildren["+i+"].move("+randOrientation()+","+randOrientation()+")", mosquitoChildren[i].speed);
+        mosquitoChildren[i].interval = setInterval(function(){mosquitoChildren[i].move(randOrientation(),randOrientation())}, mosquitoChildren[i].speed);
 
         cannons[0].searchGoal(mosquitoChildren);
         cannons[1].searchGoal(mosquitoChildren);

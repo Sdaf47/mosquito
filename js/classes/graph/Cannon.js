@@ -1,6 +1,6 @@
-Cannon = function (objectName) {
+Cannon = function () {
 
-    var cannon = new AbstractionGraph(objectName);
+    var cannon = new AbstractionGraph();
 
     cannon.background = "#000";
     cannon.lasers = [];
@@ -18,19 +18,21 @@ Cannon = function (objectName) {
     };
 
     cannon.strike = function (goalX, goalY) {
-        var i = this.lasers.length;
-        this.lasers[i] = new Laser(this.positionX, this.positionY, goalX, goalY);
-        this.lasers[i].create();
-        this.lasers[i].interval = setInterval(this.objectName + ".lasers["+i+"].strike()", this.lasers[i].speed);
+        var that = this;
+        var i = that.lasers.length;
+        that.lasers[i] = new Laser(this.positionX, this.positionY, goalX, goalY);
+        that.lasers[i].create();
+        that.lasers[i].interval = setInterval(function(){that.lasers[i].strike()}, that.lasers[i].speed);
     };
 
     cannon.searchGoal = function (goals) {
+        var that = this;
         if (goals instanceof Array) {
             for (var i in goals) {
                 if (goals.hasOwnProperty(i)) {
                     var x = goals[i].positionX,
                         y = goals[i].positionY;
-                    setTimeout(this.objectName + ".strike(" + x + ", " + y + ")", 10000 * Math.random());
+                    setTimeout(function(){that.strike(x,y)}, 10000 * Math.random());
                     //this.strike(x, y);
                 }
             }
