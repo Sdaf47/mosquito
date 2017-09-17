@@ -37,10 +37,10 @@ create_new_mosquito = function (e) {
     cannons[3].positionX = 1000;
     cannons[3].positionY = 500;
 
-    cannons[0].create();
-    cannons[1].create();
-    cannons[2].create();
-    cannons[3].create();
+    //cannons[0].create();
+    //cannons[1].create();
+    //cannons[2].create();
+    //cannons[3].create();
 
     var i = mosquitoChildren.length;
     mosquitoChildren[i] = new Mosquito();
@@ -55,8 +55,8 @@ create_new_mosquito = function (e) {
     cannons[2].searchGoal(mosquitoChildren);
     cannons[3].searchGoal(mosquitoChildren);
 
-    document.onclick = function (e) {
-        //party.start();
+    document.onmousemove = function (e) {
+        party.start();
         var i = mosquitoChildren.length;
         mosquitoChildren[i] = new Mosquito();
         mosquitoChildren[i].positionX = e.clientX;
@@ -64,16 +64,16 @@ create_new_mosquito = function (e) {
         mosquitoChildren[i].create();
         mosquitoChildren[i].interval = setInterval(function(){mosquitoChildren[i].move(randOrientation(),randOrientation())}, mosquitoChildren[i].speed);
 
-        cannons[0].searchGoal(mosquitoChildren);
-        cannons[1].searchGoal(mosquitoChildren);
-        cannons[2].searchGoal(mosquitoChildren);
-        cannons[3].searchGoal(mosquitoChildren);
+        //cannons[0].searchGoal(mosquitoChildren);
+        //cannons[1].searchGoal(mosquitoChildren);
+        //cannons[2].searchGoal(mosquitoChildren);
+        //cannons[3].searchGoal(mosquitoChildren);
     }
 };
 
 var lazers = [];
 
-document.onclick = create_new_mosquito;
+document.onmousemove = create_new_mosquito;
 
 /**
  * functions library
