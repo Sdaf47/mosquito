@@ -8,9 +8,9 @@ Laser = function (positionX, positionY, goalX, goalY) {
     laser.goalX = goalX;
     laser.goalY = goalY;
 
-    laser.background = "red";
-    laser.height = 2;
-    laser.width = 20;
+    laser.background = "rgba(243, 21, 21, 0.7)";
+    laser.height = 4;
+    laser.width = 50;
     laser.speed = 1;
 
     if (!laser.trajectory) {
@@ -42,6 +42,13 @@ Laser = function (positionX, positionY, goalX, goalY) {
     };
 
     laser.strike = function() {
+        console.log(this.x, this.y);
+        if (this.positionX < this.goalX + 100 && this.positionX > this.goalX - 100
+            && this.positionY > this.goalY - 100 && this.positionY < this.goalY + 100) {
+            this.destruct();
+            console.log("destructed");
+            return;
+        }
         this.moveAsLine(this.trajectory[0], this.trajectory[1]);
     };
 

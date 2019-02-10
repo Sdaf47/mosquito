@@ -30,10 +30,12 @@ Cannon = function () {
         if (goals instanceof Array) {
             for (var i in goals) {
                 if (goals.hasOwnProperty(i)) {
-                    var x = goals[i].positionX,
+                    let x = goals[i].positionX,
                         y = goals[i].positionY;
-                    //setTimeout(function(){that.strike(x,y)}, 10000 * Math.random());
-                    this.strike(x, y);
+                    setTimeout(function(){
+                        that.strike(x, y)
+                    }, 10000 * Math.random());
+                    // this.strike(x, y);
                 }
             }
         } else {

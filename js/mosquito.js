@@ -29,13 +29,13 @@ cannons[3] = new Cannon("cannons["+3+"]");
 create_new_mosquito = function (e) {
 
     cannons[1].positionX = 0;
-    cannons[1].positionY = 500;
+    cannons[1].positionY = 800;
 
-    cannons[2].positionX = 1000;
+    cannons[2].positionX = 1500;
     cannons[2].positionY = 0;
 
-    cannons[3].positionX = 1000;
-    cannons[3].positionY = 500;
+    cannons[3].positionX = 1500;
+    cannons[3].positionY = 800;
 
     //cannons[0].create();
     //cannons[1].create();
@@ -49,11 +49,16 @@ create_new_mosquito = function (e) {
     mosquitoChildren[i].create();
     mosquitoChildren[i].interval = setInterval(function(){mosquitoChildren[i].move(randOrientation(), randOrientation())}, mosquitoChildren[i].speed);
 
+    setTimeout(function () {
+        cannons[0].searchGoal(mosquitoChildren)
+    }, 2000);
 
-    cannons[0].searchGoal(mosquitoChildren);
-    cannons[1].searchGoal(mosquitoChildren);
-    cannons[2].searchGoal(mosquitoChildren);
-    cannons[3].searchGoal(mosquitoChildren);
+    setInterval(function () {
+        cannons[0].searchGoal(mosquitoChildren);
+        // cannons[1].searchGoal(mosquitoChildren);
+        // cannons[2].searchGoal(mosquitoChildren);
+        // cannons[3].searchGoal(mosquitoChildren);
+    }, 5000);
 
     document.onmousemove = function (e) {
         party.start();

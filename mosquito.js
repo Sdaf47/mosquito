@@ -1,17 +1,58 @@
-InterfaceCanvas = {
-    leftBorder : 10,
-    rightBorder : 1000,
-    topBorder : 10,
-    bottomBorder : 400,
-    writeBorder : function () {
-        style = "top:"+this.topBorder+";";
-        style += "left:"+this.leftBorder+";";
-        style += "width:"+this.rightBorder+";";
-        style += "height:"+this.bottomBorder+";";
-        style += "border:1px solid black;";
-        style += "position:absolute;";
-        document.write("<div style='"+style+"'></div>");
+Laser = function (positionX, positionY, goalX, goalY) {
+
+    var laser  = new AbstractionGraph();
+
+    laser.positionX = positionX;
+    laser.positionY = positionY;
+
+    laser.goalX = goalX;
+    laser.goalY = goalY;
+
+    laser.background = "rgba(243, 21, 21, 0.7)";
+    laser.height = 4;
+    laser.width = 50;
+    laser.speed = 1;
+
+    if (!laser.trajectory) {
+        //TODO refactoring because it is govno
+        var a = laser.goalX - laser.positionX;
+        var b = laser.goalY - laser.positionY;
+        var c = Math.sqrt((a * a) + (b * b));
+        var corner = Math.abs(Math.acos(a/c));
+        var corner2 = corner * 180 / Math.PI;
+        var a2 = Math.cos(corner)*10;
+        var b2 = Math.sin(corner)*10;
+        if (b < 0) {
+            b2 *= -1;
+            corner2 *= -1;
+        }
+        laser.styles = "-webkit-transform: rotate(" + corner2 + "deg);";
+        laser.trajectory = [a2, b2];
     }
+
+    laser.create = function () {
+        var styles = "width: " + this.width + "px;";
+        styles += "height: " + this.height+ "px;";
+        styles += "background: " + this.background + ";";
+        styles += "top: " + (this.positionY - this.width / 2) + "px;";
+        styles += "left: " + (this.positionX - this.height / 2) + "px;";
+        styles += "position: absolute;";
+        styles += this.styles;
+        document.write("<div id='" + laser.id + "' style='" + styles + "'></div>");
+    };
+
+    laser.strike = function() {
+        console.log(this.x, this.y);
+        if (this.positionX < this.goalX + 100 && this.positionX > this.goalX - 100
+            && this.positionY > this.goalY - 100 && this.positionY < this.goalY + 100) {
+            this.destruct();
+            console.log("destructed");
+            return;
+        }
+        this.moveAsLine(this.trajectory[0], this.trajectory[1]);
+    };
+
+    return laser;
 };Cannon = function () {
 
     var cannon = new AbstractionGraph();
@@ -44,10 +85,12 @@ InterfaceCanvas = {
         if (goals instanceof Array) {
             for (var i in goals) {
                 if (goals.hasOwnProperty(i)) {
-                    var x = goals[i].positionX,
+                    let x = goals[i].positionX,
                         y = goals[i].positionY;
-                    //setTimeout(function(){that.strike(x,y)}, 10000 * Math.random());
-                    this.strike(x, y);
+                    setTimeout(function(){
+                        that.strike(x, y)
+                    }, 10000 * Math.random());
+                    // this.strike(x, y);
                 }
             }
         } else {
@@ -57,66 +100,7 @@ InterfaceCanvas = {
 
     return cannon;
 };
-Mosquito = function () {
-
-    var mosquito = new AbstractionGraph();
-
-    mosquito.background = " url(img/mosquito.gif)";
-
-    mosquito.setRadius = function (radius) {
-        if (typeof radius !== 'undefined') {
-            this.width = radius;
-            this.height = radius;
-        }
-    };
-
-    mosquito.create = function () {
-        var styles = "width: " + this.width + "px;";
-        styles += "height: " + this.height+ "px;";
-        styles += "background: " + this.background + ";";
-        styles += "top: " + (this.positionY - this.width / 2) + "px;";
-        styles += "left: " + (this.positionX - this.height / 2) + "px;";
-        styles += "position: absolute;";
-        styles += this.styles;
-        document.write("<div id='" + mosquito.id + "' style='" + styles + "'></div>");
-    };
-
-    mosquito.revertProperty = function (prop) {
-        if (this.hasOwnProperty(prop)) {
-            if (this[prop] < 0) {
-                this[prop] = Math.abs(this[prop]);
-            } else {
-                this[prop] = Math.abs(this[prop]) * (-1);
-            }
-        }
-    };
-
-    mosquito.chaos = function () {
-        if (getProbability(3)) {
-            document.getElementsByTagName('body')[0].style.background = randColor();
-            if (getProbability(1)) {
-                this.revertProperty('orientationX');
-            } else {
-                this.revertProperty('orientationY');
-            }
-        }
-        //if (getProbability(10)) {
-        //    this.destruct();
-        //}
-    };
-
-    mosquito.checkPosition = function () {
-        this.chaos();
-        if (this.positionX >= InterfaceCanvas.rightBorder || this.positionX <= InterfaceCanvas.leftBorder) {
-            this.revertProperty('orientationX');
-        }
-        if (this.positionY >= InterfaceCanvas.bottomBorder || this.positionY <= InterfaceCanvas.topBorder) {
-            this.revertProperty('orientationY');
-        }
-    };
-
-    return mosquito;
-};AbstractionGraph = function (objectName) {
+AbstractionGraph = function (objectName) {
 
     var graph = {};
 
@@ -201,39 +185,20 @@ Mosquito = function () {
     AbstractionGraph.prototype.lastChild = graph;
 
     return graph;
-};Laser = function (positionX, positionY, goalX, goalY) {
+};Mosquito = function () {
 
-    var laser  = new AbstractionGraph();
+    var mosquito = new AbstractionGraph();
 
-    laser.positionX = positionX;
-    laser.positionY = positionY;
+    mosquito.background = " url(img/mosquito.gif)";
 
-    laser.goalX = goalX;
-    laser.goalY = goalY;
-
-    laser.background = "red";
-    laser.height = 2;
-    laser.width = 20;
-    laser.speed = 1;
-
-    if (!laser.trajectory) {
-        //TODO refactoring because it is govno
-        var a = laser.goalX - laser.positionX;
-        var b = laser.goalY - laser.positionY;
-        var c = Math.sqrt((a * a) + (b * b));
-        var corner = Math.abs(Math.acos(a/c));
-        var corner2 = corner * 180 / Math.PI;
-        var a2 = Math.cos(corner)*10;
-        var b2 = Math.sin(corner)*10;
-        if (b < 0) {
-            b2 *= -1;
-            corner2 *= -1;
+    mosquito.setRadius = function (radius) {
+        if (typeof radius !== 'undefined') {
+            this.width = radius;
+            this.height = radius;
         }
-        laser.styles = "-webkit-transform: rotate(" + corner2 + "deg);";
-        laser.trajectory = [a2, b2];
-    }
+    };
 
-    laser.create = function () {
+    mosquito.create = function () {
         var styles = "width: " + this.width + "px;";
         styles += "height: " + this.height+ "px;";
         styles += "background: " + this.background + ";";
@@ -241,14 +206,58 @@ Mosquito = function () {
         styles += "left: " + (this.positionX - this.height / 2) + "px;";
         styles += "position: absolute;";
         styles += this.styles;
-        document.write("<div id='" + laser.id + "' style='" + styles + "'></div>");
+        document.write("<div id='" + mosquito.id + "' style='" + styles + "'></div>");
     };
 
-    laser.strike = function() {
-        this.moveAsLine(this.trajectory[0], this.trajectory[1]);
+    mosquito.revertProperty = function (prop) {
+        if (this.hasOwnProperty(prop)) {
+            if (this[prop] < 0) {
+                this[prop] = Math.abs(this[prop]);
+            } else {
+                this[prop] = Math.abs(this[prop]) * (-1);
+            }
+        }
     };
 
-    return laser;
+    mosquito.chaos = function () {
+        if (getProbability(3)) {
+            document.getElementsByTagName('body')[0].style.background = randColor();
+            if (getProbability(1)) {
+                this.revertProperty('orientationX');
+            } else {
+                this.revertProperty('orientationY');
+            }
+        }
+        //if (getProbability(10)) {
+        //    this.destruct();
+        //}
+    };
+
+    mosquito.checkPosition = function () {
+        this.chaos();
+        if (this.positionX >= InterfaceCanvas.rightBorder || this.positionX <= InterfaceCanvas.leftBorder) {
+            this.revertProperty('orientationX');
+        }
+        if (this.positionY >= InterfaceCanvas.bottomBorder || this.positionY <= InterfaceCanvas.topBorder) {
+            this.revertProperty('orientationY');
+        }
+    };
+
+    return mosquito;
+};InterfaceCanvas = {
+    leftBorder : 10,
+    rightBorder : 1000,
+    topBorder : 10,
+    bottomBorder : 400,
+    writeBorder : function () {
+        style = "top:"+this.topBorder+";";
+        style += "left:"+this.leftBorder+";";
+        style += "width:"+this.rightBorder+";";
+        style += "height:"+this.bottomBorder+";";
+        style += "border:1px solid black;";
+        style += "position:absolute;";
+        document.write("<div style='"+style+"'></div>");
+    }
 };party =  {
     id : "audio-1",
     audio : "music/party.mp3",
@@ -280,13 +289,13 @@ cannons[3] = new Cannon("cannons["+3+"]");
 create_new_mosquito = function (e) {
 
     cannons[1].positionX = 0;
-    cannons[1].positionY = 500;
+    cannons[1].positionY = 800;
 
-    cannons[2].positionX = 1000;
+    cannons[2].positionX = 1500;
     cannons[2].positionY = 0;
 
-    cannons[3].positionX = 1000;
-    cannons[3].positionY = 500;
+    cannons[3].positionX = 1500;
+    cannons[3].positionY = 800;
 
     //cannons[0].create();
     //cannons[1].create();
@@ -300,11 +309,16 @@ create_new_mosquito = function (e) {
     mosquitoChildren[i].create();
     mosquitoChildren[i].interval = setInterval(function(){mosquitoChildren[i].move(randOrientation(), randOrientation())}, mosquitoChildren[i].speed);
 
+    setTimeout(function () {
+        cannons[0].searchGoal(mosquitoChildren)
+    }, 2000);
 
-    cannons[0].searchGoal(mosquitoChildren);
-    cannons[1].searchGoal(mosquitoChildren);
-    cannons[2].searchGoal(mosquitoChildren);
-    cannons[3].searchGoal(mosquitoChildren);
+    setInterval(function () {
+        cannons[0].searchGoal(mosquitoChildren);
+        // cannons[1].searchGoal(mosquitoChildren);
+        // cannons[2].searchGoal(mosquitoChildren);
+        // cannons[3].searchGoal(mosquitoChildren);
+    }, 5000);
 
     document.onmousemove = function (e) {
         party.start();
